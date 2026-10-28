@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard - The Gentle Juan Cuts</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#7a5236">
+  <link rel="apple-touch-icon" href="../images/icon-192.png">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <a class="logo" href="dashboard.html" aria-label="The Gentle Juan Cuts"><span class="logo-img" role="img" aria-label="The Gentle Juan Cuts"></span></a>
+      <nav id="staff-nav"></nav>
+    </div>
+  </header>
+
+  <main class="container staff-main">
+    <div class="page-head">
+      <div>
+        <h1 id="dash-title">Dashboard</h1>
+        <p class="hint" id="dash-sub"></p>
+      </div>
+      <div class="actions no-print" id="dash-actions" style="display:none">
+        <button class="btn btn-outline btn-sm" type="button" id="print-btn">Print</button>
+        <button class="btn btn-sm" type="button" id="pdf-btn">Download PDF</button>
+      </div>
+    </div>
+
+    <div class="message" id="message" role="alert"></div>
+
+    <div class="toolbar no-print">
+      <div role="group" aria-label="Period" class="seg" id="seg">
+        <button type="button" data-p="day" aria-pressed="true">Day</button>
+        <button type="button" data-p="month" aria-pressed="false">Month</button>
+        <button type="button" data-p="year" aria-pressed="false">Year</button>
+      </div>
+      <div class="period-nav">
+        <button class="btn btn-outline btn-sm" type="button" id="prev" aria-label="Previous period">&#8249;</button>
+        <span class="period-label" id="period-label" aria-live="polite"></span>
+        <button class="btn btn-outline btn-sm" type="button" id="next" aria-label="Next period">&#8250;</button>
+        <button class="btn btn-outline btn-sm" type="button" id="now">Today</button>
+      </div>
+    </div>
+
+    <div id="dash" style="display:none">
+      <div class="tiles" id="tiles"></div>
+      <div class="dash-grid" id="cards"></div>
+      <p class="hint" style="margin-top:0.8rem">Only completed services are counted as customers served.</p>
+    </div>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+  <script type="module" src="../js/dashboard.js"></script>
+  <script type="module" src="../js/pwa.js"></script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Receipts - The Gentle Juan Cuts</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#7a5236">
+  <link rel="apple-touch-icon" href="../images/icon-192.png">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <a class="logo" href="appointments.html" aria-label="The Gentle Juan Cuts"><span class="logo-img" role="img" aria-label="The Gentle Juan Cuts"></span></a>
+      <nav id="staff-nav"></nav>
+    </div>
+  </header>
+
+  <main class="container staff-main">
+    <div class="page-head">
+      <div>
+        <h1>Receipts</h1>
+        <p class="hint" id="period-label"></p>
+      </div>
+    </div>
+
+    <div class="message" id="message" role="alert"></div>
+
+    <div class="toolbar" id="toolbar">
+      <div>
+        <label for="from">From</label>
+        <input id="from" type="date">
+      </div>
+      <div>
+        <label for="to">To</label>
+        <input id="to" type="date">
+      </div>
+      <div class="actions">
+        <button class="btn btn-sm btn-outline" type="button" data-preset="today">Today</button>
+        <button class="btn btn-sm btn-outline" type="button" data-preset="week">This week</button>
+        <button class="btn btn-sm btn-outline" type="button" data-preset="month">This month</button>
+        <button class="btn btn-sm btn-outline" type="button" data-preset="lastmonth">Last month</button>
+      </div>
+      <div style="flex:1; min-width:220px">
+        <label for="search">Search</label>
+        <input id="search" type="search" placeholder="Receipt no., customer, phone, service or barber">
+      </div>
+    </div>
+
+    <section class="card">
+      <p class="hint" id="summary" style="margin:0 0 0.5rem; font-weight:600"></p>
+      <div id="table-wrap" style="overflow-x:auto">
+        <p class="empty">Loading...</p>
+      </div>
+    </section>
+    <p class="hint" style="margin-top:0.6rem">A receipt is saved automatically each time a customer's service is completed in the Queue.</p>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script type="module" src="../js/receipts.js"></script>
+  <script type="module" src="../js/pwa.js"></script>
+</body>
+</html>

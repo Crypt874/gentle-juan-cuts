@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Employees - The Gentle Juan Cuts</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <a class="logo" href="appointments.html" aria-label="The Gentle Juan Cuts"><span class="logo-img" role="img" aria-label="The Gentle Juan Cuts"></span></a>
+      <nav id="staff-nav"></nav>
+    </div>
+  </header>
+
+  <main class="container staff-main">
+    <div class="page-head">
+      <div>
+        <h1>Employees</h1>
+        <p class="hint">Create a login for each team member. Their role decides what they can see.</p>
+      </div>
+      <button class="btn" type="button" id="add-btn">Add employee</button>
+    </div>
+
+    <div class="message" id="message" role="alert"></div>
+
+    <details class="card roles">
+      <summary>What can each role do?</summary>
+      <div style="overflow-x:auto">
+        <table class="table">
+          <thead>
+            <tr><th></th><th>Admin (owner)</th><th>Staff (front desk)</th><th>Barber</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Appointments</td><td>Full</td><td>Full</td><td>Own customers, view only</td></tr>
+            <tr><td>Queue</td><td>Full</td><td>Full</td><td>Own customers, view only</td></tr>
+            <tr><td>Customers</td><td>Full</td><td>Full</td><td>No access</td></tr>
+            <tr><td>Services and prices</td><td>Full</td><td>View only</td><td>No access</td></tr>
+            <tr><td>Barbers</td><td>Full</td><td>View only</td><td>No access</td></tr>
+            <tr><td>Sales reports</td><td>Full</td><td>No access</td><td>No access</td></tr>
+            <tr><td>Employees and Settings</td><td>Full</td><td>No access</td><td>No access</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </details>
+
+    <section class="card" id="form-card" style="display:none">
+      <h2 id="form-title">Add employee</h2>
+      <form id="emp-form" novalidate autocomplete="off">
+        <div class="row">
+          <div>
+            <label for="e-name">Full name</label>
+            <input id="e-name" name="emp-name" type="text" maxlength="60" autocomplete="off" required>
+          </div>
+          <div>
+            <label for="e-email">Email (used to log in)</label>
+            <input id="e-email" name="emp-email" type="email" maxlength="120" autocomplete="off" autocapitalize="off" spellcheck="false" required>
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label for="e-role">Role</label>
+            <select id="e-role">
+              <option value="staff">Staff (front desk)</option>
+              <option value="barber">Barber</option>
+            </select>
+          </div>
+          <div id="barber-wrap" style="display:none">
+            <label for="e-barber">Barber profile</label>
+            <select id="e-barber"></select>
+            <div class="hint">The barber profile is what customers see when booking. A barber only sees their own customers.</div>
+          </div>
+        </div>
+        <div id="pw-wrap">
+          <label for="e-password">Temporary password</label>
+          <div class="pw-row">
+            <input id="e-password" name="emp-pass" type="text" maxlength="60" autocomplete="off" spellcheck="false">
+            <button class="btn btn-outline btn-sm" type="button" id="gen-btn">Generate</button>
+          </div>
+          <div class="hint">At least 6 characters. Give it to the employee; they can set their own with "Forgot password?" on the login page.</div>
+        </div>
+        <div class="actions" style="margin-top:1rem">
+          <button class="btn" type="submit" id="save-btn">Save</button>
+          <button class="btn btn-outline" type="button" id="cancel-btn">Cancel</button>
+        </div>
+      </form>
+    </section>
+
+    <div id="list" class="list">
+      <p class="empty">Loading...</p>
+    </div>
+  </main>
+
+  <script type="module" src="../js/employees.js"></script>
+</body>
+</html>

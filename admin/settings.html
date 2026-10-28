@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Settings - The Gentle Juan Cuts</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#7a5236">
+  <link rel="apple-touch-icon" href="../images/icon-192.png">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <a class="logo" href="appointments.html" aria-label="The Gentle Juan Cuts"><span class="logo-img" role="img" aria-label="The Gentle Juan Cuts"></span></a>
+      <nav id="staff-nav"></nav>
+    </div>
+  </header>
+
+  <main class="container staff-main">
+    <h1>Settings</h1>
+
+    <div class="message" id="message" role="alert"></div>
+
+    <div id="settings-body">
+      <div class="tabs" role="tablist" aria-label="Settings sections">
+        <button class="tab" type="button" role="tab" id="tab-business" aria-controls="panel-business" aria-selected="true" data-tab="business">Business profile</button>
+        <button class="tab" type="button" role="tab" id="tab-site" aria-controls="panel-site" aria-selected="false" data-tab="site" tabindex="-1">Website</button>
+        <button class="tab" type="button" role="tab" id="tab-email" aria-controls="panel-email" aria-selected="false" data-tab="email" tabindex="-1">Email</button>
+        <button class="tab" type="button" role="tab" id="tab-accounts" aria-controls="panel-accounts" aria-selected="false" data-tab="accounts" tabindex="-1">Accounts</button>
+        <button class="tab" type="button" role="tab" id="tab-activity" aria-controls="panel-activity" aria-selected="false" data-tab="activity" tabindex="-1">Activity log</button>
+        <button class="tab" type="button" role="tab" id="tab-backup" aria-controls="panel-backup" aria-selected="false" data-tab="backup" tabindex="-1">Backup &amp; restore</button>
+      </div>
+
+      <!-- ================= Business profile ================= -->
+      <div id="panel-business" role="tabpanel" aria-labelledby="tab-business">
+        <section class="card">
+          <h2>Business profile</h2>
+          <p class="hint" style="margin-top:0">These details appear on your website and on receipts. The opening hours decide which times customers can book.</p>
+          <form id="biz-form" novalidate autocomplete="off">
+            <div class="row">
+              <div>
+                <label for="b-name">Shop name</label>
+                <input id="b-name" type="text" maxlength="60" required>
+              </div>
+              <div>
+                <label for="b-phone">Phone number</label>
+                <input id="b-phone" type="tel" maxlength="30" placeholder="e.g. 0917 123 4567">
+              </div>
+            </div>
+            <div class="row">
+              <div>
+                <label for="b-email">Email (optional)</label>
+                <input id="b-email" type="email" maxlength="120">
+              </div>
+              <div>
+                <label for="b-facebook">Facebook page (optional)</label>
+                <input id="b-facebook" type="text" maxlength="200" placeholder="https://facebook.com/yourpage">
+              </div>
+            </div>
+            <label for="b-address">Address</label>
+            <input id="b-address" type="text" maxlength="200">
+
+            <h3 style="margin:1.2rem 0 0">Opening hours</h3>
+            <div class="row">
+              <div>
+                <label for="b-open">Opens</label>
+                <select id="b-open"></select>
+              </div>
+              <div>
+                <label for="b-close">Closes</label>
+                <select id="b-close"></select>
+              </div>
+              <div>
+                <label for="b-slot">Appointment length</label>
+                <select id="b-slot">
+                  <option value="30">30 minutes</option>
+                  <option value="45">45 minutes</option>
+                  <option value="60">1 hour</option>
+                </select>
+              </div>
+            </div>
+            <label id="days-label">Open on</label>
+            <div class="days" id="b-days" role="group" aria-labelledby="days-label"></div>
+            <p class="hint" id="b-preview"></p>
+
+            <h3 style="margin:1.2rem 0 0.2rem">Closed dates (holidays, days off)</h3>
+            <p class="hint" style="margin-top:0">Customers can't book on these dates, and the website shows them. Add a date, then press <strong>Save</strong> below.</p>
+            <div class="row">
+              <div>
+                <label for="cd-date">Date</label>
+                <input id="cd-date" type="date">
+              </div>
+              <div>
+                <label for="cd-note">Reason (optional)</label>
+                <input id="cd-note" type="text" maxlength="60" placeholder="e.g. Christmas Day">
+              </div>
+            </div>
+            <div class="actions" style="margin-top:0.6rem">
+              <button class="btn btn-outline btn-sm" type="button" id="cd-add">Add closed date</button>
+            </div>
+            <ul class="plain" id="cd-list"></ul>
+            <p class="hint">The last appointment starts before closing time. Changing hours doesn't affect appointments that are already booked.</p>
+
+            <div class="message" id="biz-status" role="alert"></div>
+            <div class="actions" style="margin-top:1rem">
+              <button class="btn" type="submit" id="biz-save">Save changes</button>
+            </div>
+          </form>
+        </section>
+      </div>
+
+      <!-- ================= Website (slideshow + video) ================= -->
+      <div id="panel-site" role="tabpanel" aria-labelledby="tab-site" hidden>
+        <section class="card">
+          <h2>Home page slideshow and video</h2>
+          <p class="hint" style="margin-top:0">Pictures play as a slideshow at the top of your home page. Until you add some, a placeholder is shown.</p>
+          <form id="site-form" novalidate autocomplete="off">
+            <h3 style="margin:0.6rem 0 0.2rem">Slideshow pictures</h3>
+            <div id="slide-list" class="slide-list"></div>
+            <div class="actions" style="margin-top:0.6rem">
+              <button class="btn btn-outline btn-sm" type="button" id="slide-add">Add another picture</button>
+            </div>
+            <p class="hint">Tap <strong>Choose from gallery</strong> to pick a photo from your phone or computer. You can also paste a picture link (https://...).</p>
+
+            <h3 style="margin:1.2rem 0 0.2rem">Haircut gallery ("Our Work")</h3>
+            <p class="hint" style="margin-top:0">Shown under "Our Work" on the home page. Use the caption for the haircut name. Until you add some, placeholders are shown.</p>
+            <div id="gallery-list" class="slide-list"></div>
+            <div class="actions" style="margin-top:0.6rem">
+              <button class="btn btn-outline btn-sm" type="button" id="gallery-add">Add another photo</button>
+            </div>
+
+            <h3 style="margin:1.2rem 0 0.2rem">Sample video</h3>
+            <div class="row">
+              <div>
+                <label for="v-url">Video link</label>
+                <input id="v-url" type="text" maxlength="300" placeholder="YouTube or Facebook link, or a .mp4 link">
+              </div>
+              <div>
+                <label for="v-title">Video title (optional)</label>
+                <input id="v-title" type="text" maxlength="80" placeholder="e.g. A day at the shop">
+              </div>
+            </div>
+            <p class="hint">Easiest way: upload the video to YouTube (as Unlisted) or your Facebook page, then paste its link here.</p>
+
+            <div class="message" id="site-status" role="alert"></div>
+            <div class="actions" style="margin-top:1rem">
+              <button class="btn" type="submit" id="site-save">Save changes</button>
+              <a class="btn btn-outline" href="../index.html" target="_blank" rel="noopener">View website</a>
+            </div>
+          </form>
+        </section>
+      </div>
+
+      <!-- ================= Activity log ================= -->
+      <div id="panel-activity" role="tabpanel" aria-labelledby="tab-activity" hidden>
+        <section class="card">
+          <h2>Activity log</h2>
+          <p class="hint" style="margin-top:0">The latest 200 important actions: accounts, prices, settings, expenses, backups and cancellations. Lines can't be edited or deleted.</p>
+          <div class="toolbar" style="margin-bottom:0.6rem">
+            <div style="flex:1 1 220px">
+              <label for="act-search">Search</label>
+              <input id="act-search" type="text" placeholder="Name, action or detail" autocomplete="off">
+            </div>
+            <div class="actions">
+              <button class="btn btn-outline btn-sm" type="button" id="act-refresh">Refresh</button>
+            </div>
+          </div>
+          <div id="act-list"></div>
+        </section>
+      </div>
+
+      <!-- ================= Email confirmations ================= -->
+      <div id="panel-email" role="tabpanel" aria-labelledby="tab-email" hidden>
+        <section class="card">
+          <h2>Confirmation emails</h2>
+          <p style="margin-top:0">When staff confirm an appointment and the customer left an email address, a confirmation email goes to them.</p>
+          <ul class="plain">
+            <li><strong>Automatic emails are off (default):</strong> your email app opens with the message already written. Staff just press Send.</li>
+            <li><strong>Automatic emails are on:</strong> the email is sent for you, with no extra step. This needs a free <a href="https://www.emailjs.com" target="_blank" rel="noopener noreferrer">EmailJS</a> account.</li>
+          </ul>
+          <form id="mail-form" novalidate autocomplete="off">
+            <label class="check"><input id="m-enabled" type="checkbox"> Send confirmation emails automatically (EmailJS)</label>
+            <div class="row">
+              <div>
+                <label for="m-service">EmailJS Service ID</label>
+                <input id="m-service" type="text" maxlength="80" placeholder="service_xxxxxxx">
+              </div>
+              <div>
+                <label for="m-template">EmailJS Template ID</label>
+                <input id="m-template" type="text" maxlength="80" placeholder="template_xxxxxxx">
+              </div>
+              <div>
+                <label for="m-key">EmailJS Public Key</label>
+                <input id="m-key" type="text" maxlength="80">
+              </div>
+            </div>
+            <p class="hint">In EmailJS, create a template with <strong>To email</strong> set to <code>{{to_email}}</code>, subject <code>{{subject}}</code> and body <code>{{message}}</code>.</p>
+            <div class="row">
+              <div>
+                <label for="m-test">Send a test email to</label>
+                <input id="m-test" type="email" maxlength="120" placeholder="your@email.com">
+              </div>
+              <div style="align-self:end"><button class="btn btn-outline" type="button" id="mail-test">Send test</button></div>
+            </div>
+            <div class="message" id="mail-status" role="alert"></div>
+            <div class="actions" style="margin-top:1rem">
+              <button class="btn" type="submit" id="mail-save">Save changes</button>
+            </div>
+          </form>
+        </section>
+      </div>
+
+      <!-- ================= Accounts ================= -->
+      <div id="panel-accounts" role="tabpanel" aria-labelledby="tab-accounts" hidden>
+        <div class="page-head" style="margin-bottom:0.6rem">
+          <p class="hint" style="margin:0">Create a login for each team member. Their role decides what they can see. Employees are your barbers.</p>
+          <button class="btn" type="button" id="acct-add-btn">Add account</button>
+        </div>
+
+        <details class="card roles">
+          <summary>What can each role do?</summary>
+          <div style="overflow-x:auto">
+            <table class="table">
+              <thead>
+                <tr><th></th><th>Owner / co-owner</th><th>Admin</th><th>Staff</th><th>Employee (barber)</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Dashboard</td><td>Full + PDF</td><td>Full + PDF</td><td>Customer counts</td><td>Own customers</td></tr>
+                <tr><td>Appointments</td><td>Full</td><td>Full</td><td>Full</td><td>Own customers, view only</td></tr>
+                <tr><td>Queue</td><td>Full</td><td>Full</td><td>Full</td><td>Own customers, view only</td></tr>
+                <tr><td>Receipts</td><td>Full</td><td>Full</td><td>Full</td><td>No access</td></tr>
+                <tr><td>Customers</td><td>Full</td><td>Full</td><td>Full</td><td>No access</td></tr>
+                <tr><td>Services and prices</td><td>Full</td><td>Full</td><td>View only</td><td>No access</td></tr>
+                <tr><td>Barbers</td><td>Full</td><td>Full</td><td>View only</td><td>No access</td></tr>
+                <tr><td>Sales reports</td><td>Full</td><td>Full</td><td>No access</td><td>No access</td></tr>
+                <tr><td>Business profile, Website, Email</td><td>Full</td><td>Full</td><td>No access</td><td>No access</td></tr>
+                <tr><td>Accounts</td><td>All accounts, including other owners</td><td>Staff and employees</td><td>No access</td><td>No access</td></tr>
+                <tr><td>Backup &amp; restore</td><td>Full</td><td>No access</td><td>No access</td><td>No access</td></tr>
+                <tr><td>Delete receipts and sales records</td><td>Yes</td><td>No</td><td>No</td><td>No</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </details>
+
+        <section class="card" id="acct-form-card" style="display:none">
+          <h2 id="acct-form-title">Add account</h2>
+          <form id="acct-form" novalidate autocomplete="off">
+            <div class="row">
+              <div>
+                <label for="e-name">Full name</label>
+                <input id="e-name" name="emp-name" type="text" maxlength="60" autocomplete="off" required>
+              </div>
+              <div>
+                <label for="e-email">Email (used to log in)</label>
+                <input id="e-email" name="emp-email" type="email" maxlength="120" autocomplete="off" autocapitalize="off" spellcheck="false" required>
+              </div>
+            </div>
+            <div class="row">
+              <div>
+                <label for="e-role">Role</label>
+                <select id="e-role"></select>
+                <div class="hint" id="role-help"></div>
+              </div>
+              <div id="barber-wrap" style="display:none">
+                <label for="e-barber">Barber profile</label>
+                <select id="e-barber"></select>
+                <div class="hint">A new barber profile is created for them automatically (customers see it when booking). A barber only sees their own customers.</div>
+              </div>
+            </div>
+            <div id="pw-wrap">
+              <label for="e-password">Temporary password</label>
+              <div class="pw-row">
+                <input id="e-password" name="emp-pass" type="text" maxlength="60" autocomplete="off" spellcheck="false">
+                <button class="btn btn-outline btn-sm" type="button" id="gen-btn">Generate</button>
+              </div>
+              <div class="hint">At least 6 characters. Give it to the employee; they can set their own with "Forgot password?" on the login page.</div>
+            </div>
+            <div class="actions" style="margin-top:1rem">
+              <button class="btn" type="submit" id="acct-save-btn">Save</button>
+              <button class="btn btn-outline" type="button" id="acct-cancel-btn">Cancel</button>
+            </div>
+          </form>
+        </section>
+
+        <div id="acct-list" class="list" style="margin-top:0.8rem">
+          <p class="empty">Loading...</p>
+        </div>
+      </div>
+
+      <!-- ================= Backup & restore ================= -->
+      <div id="panel-backup" role="tabpanel" aria-labelledby="tab-backup" hidden>
+        <div class="split" style="margin-top:0">
+          <section class="card" id="backup-card">
+            <h2>Back up my data</h2>
+            <p>Saves a copy of everything in the shop system to your computer.</p>
+            <ol style="margin:0.4rem 0 0.8rem 1.2rem; padding:0">
+              <li>Click <strong>Download backup</strong>.</li>
+              <li>A file is saved in your Downloads folder.</li>
+              <li>Keep that file safe, for example on a flash drive or in Google Drive.</li>
+            </ol>
+            <div class="actions">
+              <button class="btn" type="button" id="backup-btn">Download backup</button>
+            </div>
+            <p class="hint" id="last-backup"></p>
+          </section>
+
+          <section class="card" id="restore-card">
+            <h2>Restore from a backup</h2>
+            <p>Use this only if data was lost or changed by mistake. It puts back everything saved in your backup file.</p>
+            <label for="restore-file">Choose your backup file</label>
+            <input id="restore-file" type="file" accept=".json,application/json">
+
+            <div id="restore-preview" style="display:none">
+              <p id="restore-meta" style="margin:0.8rem 0 0; font-weight:600"></p>
+              <p class="hint">Nothing is deleted. We also save a copy of your current data first, just in case.</p>
+              <div class="actions">
+                <button class="btn" type="button" id="restore-btn">Restore this backup</button>
+                <button class="btn btn-outline" type="button" id="restore-cancel">Cancel</button>
+              </div>
+              <p class="hint" id="restore-progress" style="font-weight:600"></p>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script type="module" src="../js/settings.js"></script>
+  <script type="module" src="../js/pwa.js"></script>
+</body>
+</html>

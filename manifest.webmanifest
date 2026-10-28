@@ -1,0 +1,15 @@
+{
+  "name": "The Gentle Juan Cuts",
+  "short_name": "Gentle Juan",
+  "description": "Book a haircut at The Gentle Juan Cuts.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f1e9dd",
+  "theme_color": "#7a5236",
+  "icons": [
+    { "src": "images/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "images/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "images/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

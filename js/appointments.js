@@ -338,8 +338,12 @@ function renderCard(a) {
 
 function render() {
   const filter = statusSel.value;
+  const term = document.getElementById("search").value.trim().toLowerCase();
   const rows = appointments
     .filter((a) => filter === "all" || a.status === filter)
+    .filter((a) => !term || String(a.customerName || "").toLowerCase().includes(term) ||
+      String(a.contactNumber || "").replace(/\D/g, "").includes(term.replace(/\D/g, "") || "\u0000") ||
+      String(a.contactNumber || "").includes(term))
     .sort((x, y) => (x.date + x.time).localeCompare(y.date + y.time));
 
   listBox.replaceChildren();
@@ -391,6 +395,7 @@ requireStaff(async (ctx) => {
   });
   dateInput.addEventListener("change", () => { if (dateInput.value) subscribe(); });
   statusSel.addEventListener("change", render);
+  document.getElementById("search").addEventListener("input", render);
 
   subscribe();
 });

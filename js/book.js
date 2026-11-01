@@ -179,6 +179,7 @@ form.addEventListener("submit", async (e) => {
   if (name.length < 2) return showMessage("Please enter your full name.", "error");
   if (!/^[0-9+\-\s()]{7,20}$/.test(contact)) return showMessage("Please enter a valid contact number.", "error");
   if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showMessage("Please enter a valid email address, or leave it blank.", "error");
+  if (!$("consent").checked) return showMessage("Please tick the box to agree to the privacy notice.", "error");
   if (!serviceId) return showMessage("Please select a service.", "error");
   if (!barberId) return showMessage("Please select a barber.", "error");
   if (!date || date < todayStr()) return showMessage("Please pick a valid date.", "error");

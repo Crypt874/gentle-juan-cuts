@@ -13,6 +13,7 @@ export const DEFAULT_BUSINESS = {
   openHour: 9,        // 9:00 AM
   closeHour: 19,      // the last slot starts before 7:00 PM
   slotMinutes: 60,
+  cancelCutoffHours: 0, // 0 = customers can cancel any time
   closedWeekdays: [], // 0 = Sunday ... 6 = Saturday
   closedDates: []     // holidays etc.: [{ date: "2026-12-25", note: "Christmas" }]
 };

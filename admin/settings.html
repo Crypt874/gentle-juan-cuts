@@ -80,6 +80,15 @@
                 </select>
               </div>
             </div>
+            <label for="b-cutoff">Customers can cancel online until</label>
+            <select id="b-cutoff">
+              <option value="0">Any time</option>
+              <option value="1">1 hour before</option>
+              <option value="2">2 hours before</option>
+              <option value="4">4 hours before</option>
+              <option value="12">12 hours before</option>
+              <option value="24">24 hours before</option>
+            </select>
             <label id="days-label">Open on</label>
             <div class="days" id="b-days" role="group" aria-labelledby="days-label"></div>
             <p class="hint" id="b-preview"></p>

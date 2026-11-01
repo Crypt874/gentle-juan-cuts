@@ -180,8 +180,8 @@ function renderCard(q) {
     }
   }
 
-  // Every finished customer gets a receipt (visible to all staff roles)
-  if (q.status === "completed" && canEdit) {
+  // Every finished customer gets a receipt (staff see all; a barber sees their own customers')
+  if (q.status === "completed" && (canEdit || (myBarberId && q.barberId === myBarberId))) {
     const receiptRow = el("div", "actions");
     const mk = (text, print) => {
       const rb = el("button", "btn btn-sm btn-outline", text);

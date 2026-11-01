@@ -105,6 +105,7 @@ function fill(b) {
   $("b-open").value = String(b.openHour);
   $("b-close").value = String(b.closeHour);
   $("b-slot").value = String(b.slotMinutes);
+  $("b-cutoff").value = String(b.cancelCutoffHours || 0);
   const closed = new Set(b.closedWeekdays || []);
   $("b-days").querySelectorAll("input").forEach((i) => { i.checked = !closed.has(Number(i.value)); });
   updatePreview();
@@ -150,6 +151,7 @@ export async function initBusiness() {
     try {
       await setDoc(doc(db, "settings", "business"), {
         name, phone, email, facebook, address, ...hours, slotMinutes,
+        cancelCutoffHours: Number($("b-cutoff").value) || 0,
         openTime: `${String(hours.openHour).padStart(2, "0")}:00`,
         closeTime: `${String(hours.closeHour).padStart(2, "0")}:00`,
         closedDateList: [...closedDates.keys()].sort(),

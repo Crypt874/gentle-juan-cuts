@@ -1,6 +1,7 @@
 // Customer page: check the status of a booking with its private link/code, or cancel it.
 import { db } from "./firebase-config.js";
 import "./appcheck.js";
+import { getBusiness } from "./business.js";
 import { doc, getDoc, writeBatch } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
 const $ = (id) => document.getElementById(id);
@@ -9,7 +10,8 @@ const todayStr = () => { const d = new Date(); return `${d.getFullYear()}-${pad(
 const label12h = (t) => { const [h, m] = String(t).split(":").map(Number); return `${h % 12 === 0 ? 12 : h % 12}:${pad(m)} ${h >= 12 ? "PM" : "AM"}`; };
 const peso = new Intl.NumberFormat("en-PH", { style: "currency", currency: "PHP", maximumFractionDigits: 0 });
 
-let current = null; // { id, data }
+let current = null;
+let cutoffHours = 0; // { id, data }
 
 function say(text, type) {
   const box = $("message");
@@ -65,8 +67,13 @@ function show(id, a) {
     dl.append(dt, dd);
   });
 
-  const canCancel = (a.status === "pending" || a.status === "confirmed") && !inQueue && a.date >= todayStr();
+  const startMs = new Date(`${a.date}T${a.time}:00+08:00`).getTime();
+  const tooLate = cutoffHours > 0 && Date.now() > startMs - cutoffHours * 3600000;
+  const canCancel = (a.status === "pending" || a.status === "confirmed") && !inQueue && a.date >= todayStr() && !tooLate;
   $("cancel-btn").style.display = canCancel ? "" : "none";
+  if (tooLate && (a.status === "pending" || a.status === "confirmed") && !inQueue) {
+    $("r-note").textContent += ` Online cancellation closes ${cutoffHours} hour(s) before the appointment. Please contact the shop.`;
+  }
   $("result").style.display = "";
 }
 
@@ -76,6 +83,7 @@ async function lookup(raw) {
   const id = idFrom(raw);
   if (!/^[A-Za-z0-9]{15,40}$/.test(id)) return say("That doesn't look like a booking link or code. Please check it and try again.", "error");
   try {
+    cutoffHours = Number((await getBusiness()).cancelCutoffHours) || 0;
     const snap = await getDoc(doc(db, "appointments", id));
     if (!snap.exists()) return say("We couldn't find that booking. Please check the link, or contact the shop.", "error");
     show(id, snap.data());

@@ -31,7 +31,7 @@ export function askPayment(q) {
     overlay.setAttribute("aria-label", "Finish visit");
     const box = el("div", "pay-box card");
     box.append(el("h3", "", "Finish this visit"));
-    box.append(el("p", "muted", `${queueLabel(q.queueNumber)} - ${q.customerName} - ${q.serviceName} (${peso.format(base)})`));
+    box.append(el("p", "muted", `${q.queueNumber ? queueLabel(q.queueNumber) + " - " : ""}${q.customerName} - ${q.serviceName} (${peso.format(base)})`));
 
     const checks = [];
     const total = el("p", "pay-total", "");

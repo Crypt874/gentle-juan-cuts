@@ -304,26 +304,23 @@ async function setupWalkInForm() {
 }
 
 // ---------- init ----------
-requireStaff((ctx) => {
-  canEdit = ctx.canEdit;
-  isAdmin = ctx.isAdmin;
+let subscribedDate = "";
+let unsubs = [];
+
+// Listens to today's queue. After midnight it switches to the new day by itself.
+function subscribe(ctx) {
+  const today = todayStr();
+  if (today === subscribedDate) return;
+  subscribedDate = today;
+  unsubs.forEach((u) => u());
+  unsubs = [];
+  parts.mine = [];
+  parts.open = [];
   document.getElementById("today-label").textContent =
     new Date().toLocaleDateString("en-PH", { weekday: "long", year: "numeric", month: "long", day: "numeric" });
 
-  loadOfferedServices();
-  if (canEdit) {
-    setupWalkInForm();
-    document.getElementById("board-link").style.display = "";
-  }
-
   const onErr = (err) => notify(friendlyError(err), "error");
   if (ctx.isBarber) {
-    if (!ctx.profile.barberId) {
-      notify("Your login isn't linked to a barber profile yet. Please ask the admin.", "error");
-      return;
-    }
-    myBarberId = ctx.profile.barberId;
-    myName = ctx.profile.name || ctx.profile.displayName || "Barber";
     // Two lists, merged: this barber's own customers + customers nobody has claimed yet.
     redraw = () => {
       const seen = new Set();
@@ -334,15 +331,70 @@ requireStaff((ctx) => {
       console.error(what, err);
       notify(`Could not load ${what}. ${friendlyError(err)} (If this says permission, publish the newest firestore.rules.)`, "error");
     };
-    onSnapshot(query(collection(db, "queue"), where("date", "==", todayStr()), where("barberId", "==", myBarberId)), take("mine"), fail("your customers"));
-    onSnapshot(query(collection(db, "queue"), where("date", "==", todayStr()), where("barberId", "==", "")), take("open"), fail("unclaimed customers"));
+    unsubs.push(
+      onSnapshot(query(collection(db, "queue"), where("date", "==", today), where("barberId", "==", myBarberId)), take("mine"), fail("your customers")),
+      onSnapshot(query(collection(db, "queue"), where("date", "==", today), where("barberId", "==", "")), take("open"), fail("unclaimed customers"))
+    );
+    return;
+  }
+  unsubs.push(onSnapshot(query(collection(db, "queue"), where("date", "==", today)), (snap) => {
+    render(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
+  }, onErr));
+}
+
+// Customers still "waiting" or "serving" from an earlier day were never finished: close them as cancelled
+// (nothing is charged). Each role closes what it is allowed to: owner/admin everything, staff the unclaimed ones,
+// a barber their own.
+async function closeOldEntries(ctx) {
+  const today = todayStr();
+  let closed = 0;
+  try {
+    for (const status of ["waiting", "serving"]) {
+      const filters = [where("status", "==", status)];
+      if (ctx.isBarber) filters.push(where("barberId", "==", myBarberId));
+      const snap = await getDocs(query(collection(db, "queue"), ...filters));
+      for (const d of snap.docs) {
+        const q = d.data();
+        if (!q.date || q.date >= today) continue;
+        if (!ctx.isAdmin && !ctx.isBarber && q.barberId) continue; // staff can't touch a barber's customer
+        try {
+          await updateDoc(doc(db, "queue", d.id), { status: "cancelled", completedAt: serverTimestamp() });
+          closed += 1;
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    }
+    if (closed) logActivity("Closed unfinished customers from earlier days", `${closed} cancelled`);
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+requireStaff((ctx) => {
+  canEdit = ctx.canEdit;
+  isAdmin = ctx.isAdmin;
+  loadOfferedServices();
+  if (canEdit) {
+    setupWalkInForm();
+    document.getElementById("board-link").style.display = "";
+  }
+  if (ctx.isBarber) {
+    if (!ctx.profile.barberId) {
+      notify("Your login isn't linked to a barber profile yet. Please ask the admin.", "error");
+      return;
+    }
+    myBarberId = ctx.profile.barberId;
+    myName = ctx.profile.name || ctx.profile.displayName || "Barber";
     getDocs(query(collection(db, "barbers"), orderBy("name"))).then((s) => {
       const b = s.docs.find((d) => d.id === myBarberId);
       if (b) myName = b.data().name || myName;
     }).catch(() => {});
-    return;
   }
-  onSnapshot(query(collection(db, "queue"), where("date", "==", todayStr())), (snap) => {
-    render(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
-  }, onErr);
+  subscribe(ctx);
+  closeOldEntries(ctx);
+  // A page left open overnight moves to the new day by itself.
+  setInterval(() => {
+    if (todayStr() !== subscribedDate) { subscribe(ctx); closeOldEntries(ctx); }
+  }, 30000);
 });

@@ -607,3 +607,5 @@ ul.plain li { margin: 0.25rem 0; }
 .pay-how { margin: 0.6rem 0 0; color: var(--muted); }
 .warn-text { color: var(--warn) !important; font-weight: 600; }
 .rate-input { width: 5.5rem; margin: 0; }
+
+.tile-strong { border-color: var(--accent); }

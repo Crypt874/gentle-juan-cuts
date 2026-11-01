@@ -15,11 +15,14 @@ const colDone = document.getElementById("col-done");
 
 let canEdit = false;
 let myBarberId = "";
-let myName = "";   // set for employee logins
+let myName = "";
+let isAdmin = false;   // owner/admin may step in; staff may not change a barber's customer
+const parts = { mine: [], open: [] }; // an employee's two lists: own customers + unclaimed ones
+let redraw = () => {};   // set for employee logins
 let barberList = {};   // id -> data, for assigning unclaimed customers (owner/admin/staff)
 
 // Staff can act on everyone; an employee only on their own customers.
-const canAct = (q) => canEdit || (!!myBarberId && q.barberId === myBarberId);
+const canAct = (q) => isAdmin || (!!myBarberId && q.barberId === myBarberId);
 const isUnclaimed = (q) => !q.barberId;
 
 // ---------- actions ----------
@@ -37,6 +40,10 @@ async function claimEntry(q) {
   clearNotice();
   try {
     await updateDoc(doc(db, "queue", q.id), { barberId: myBarberId, barberName: myName });
+    // show it at once under "mine" (the live lists confirm it a moment later)
+    parts.open = parts.open.filter((x) => x.id !== q.id);
+    parts.mine = [...parts.mine.filter((x) => x.id !== q.id), { ...q, barberId: myBarberId, barberName: myName }];
+    redraw();
     logActivity("Claimed a walk-in", `${queueLabel(q.queueNumber)} ${q.customerName}`);
     notify(`You claimed ${q.customerName}. You can now start serving, finish or cancel them.`, "success");
   } catch (err) {
@@ -108,6 +115,24 @@ function actionButton(text, className, handler) {
   return b;
 }
 
+// Dropdown + button for giving a customer to a barber (owner/admin/staff).
+function assignControls(q, placeholder, buttonText) {
+  const sel = document.createElement("select");
+  sel.className = "inline-select";
+  sel.setAttribute("aria-label", "Assign barber");
+  const first = document.createElement("option");
+  first.value = "";
+  first.textContent = placeholder;
+  sel.append(first);
+  Object.entries(barberList).filter(([id, b]) => isBookableBarber(b) && id !== q.barberId).forEach(([id, b]) => {
+    const o = document.createElement("option");
+    o.value = id;
+    o.textContent = b.name;
+    sel.append(o);
+  });
+  return [sel, actionButton(buttonText, "btn-outline", () => assignEntry(q, sel.value))];
+}
+
 function renderCard(q) {
   const card = el("div", `card qcard q-${q.status}`);
 
@@ -131,20 +156,7 @@ function renderCard(q) {
     if (myBarberId) {
       actions.append(actionButton("Claim", "", () => claimEntry(q)));
     } else if (canEdit) {
-      const sel = document.createElement("select");
-      sel.className = "inline-select";
-      sel.setAttribute("aria-label", "Assign barber");
-      const first = document.createElement("option");
-      first.value = "";
-      first.textContent = "Assign to barber...";
-      sel.append(first);
-      Object.entries(barberList).filter(([, b]) => isBookableBarber(b)).forEach(([id, b]) => {
-        const o = document.createElement("option");
-        o.value = id;
-        o.textContent = b.name;
-        sel.append(o);
-      });
-      actions.append(sel, actionButton("Assign", "btn-outline", () => assignEntry(q, sel.value)));
+      actions.append(...assignControls(q, "Assign to barber...", "Assign"));
       actions.append(actionButton("Cancel", "btn-danger", () => cancelEntry(q)));
     }
     if (actions.children.length) card.append(actions);
@@ -158,6 +170,14 @@ function renderCard(q) {
       actions.append(actionButton("Cancel", "btn-danger", () => cancelEntry(q)));
     }
     if (actions.children.length) card.append(actions);
+  } else if (canEdit && !isUnclaimed(q) && (q.status === "waiting" || q.status === "serving")) {
+    // Staff can't change a barber's customer; they can only move a waiting one to another barber.
+    card.append(el("p", "muted", `Only ${q.barberName} can ${q.status === "waiting" ? "start, finish or cancel" : "finish or cancel"} this customer.`));
+    if (q.status === "waiting") {
+      const actions = el("div", "actions");
+      actions.append(...assignControls(q, "Move to another barber...", "Move"));
+      card.append(actions);
+    }
   }
 
   // Every finished customer gets a receipt (visible to all staff roles)
@@ -286,6 +306,7 @@ async function setupWalkInForm() {
 // ---------- init ----------
 requireStaff((ctx) => {
   canEdit = ctx.canEdit;
+  isAdmin = ctx.isAdmin;
   document.getElementById("today-label").textContent =
     new Date().toLocaleDateString("en-PH", { weekday: "long", year: "numeric", month: "long", day: "numeric" });
 
@@ -304,11 +325,17 @@ requireStaff((ctx) => {
     myBarberId = ctx.profile.barberId;
     myName = ctx.profile.name || ctx.profile.displayName || "Barber";
     // Two lists, merged: this barber's own customers + customers nobody has claimed yet.
-    const parts = { mine: [], open: [] };
-    const draw = () => render([...parts.mine, ...parts.open]);
-    const take = (key) => (snap) => { parts[key] = snap.docs.map((d) => ({ id: d.id, ...d.data() })); draw(); };
-    onSnapshot(query(collection(db, "queue"), where("date", "==", todayStr()), where("barberId", "==", myBarberId)), take("mine"), onErr);
-    onSnapshot(query(collection(db, "queue"), where("date", "==", todayStr()), where("barberId", "==", "")), take("open"), onErr);
+    redraw = () => {
+      const seen = new Set();
+      render([...parts.mine, ...parts.open].filter((q) => (seen.has(q.id) ? false : seen.add(q.id))));
+    };
+    const take = (key) => (snap) => { parts[key] = snap.docs.map((d) => ({ id: d.id, ...d.data() })); redraw(); };
+    const fail = (what) => (err) => {
+      console.error(what, err);
+      notify(`Could not load ${what}. ${friendlyError(err)} (If this says permission, publish the newest firestore.rules.)`, "error");
+    };
+    onSnapshot(query(collection(db, "queue"), where("date", "==", todayStr()), where("barberId", "==", myBarberId)), take("mine"), fail("your customers"));
+    onSnapshot(query(collection(db, "queue"), where("date", "==", todayStr()), where("barberId", "==", "")), take("open"), fail("unclaimed customers"));
     getDocs(query(collection(db, "barbers"), orderBy("name"))).then((s) => {
       const b = s.docs.find((d) => d.id === myBarberId);
       if (b) myName = b.data().name || myName;

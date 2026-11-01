@@ -29,36 +29,22 @@
     <div class="message" id="message" role="alert"></div>
 
     <div id="earn-body">
-      <div class="toolbar no-print">
-        <div>
-          <label for="from">From</label>
-          <input id="from" type="date">
-        </div>
-        <div>
-          <label for="to">To</label>
-          <input id="to" type="date">
-        </div>
-        <div class="actions">
-          <button class="btn btn-sm btn-outline" type="button" data-preset="today">Today</button>
-          <button class="btn btn-sm btn-outline" type="button" data-preset="week">This week</button>
-          <button class="btn btn-sm btn-outline" type="button" data-preset="month">This month</button>
-          <button class="btn btn-sm btn-outline" type="button" data-preset="lastmonth">Last month</button>
-        </div>
-      </div>
-
       <div class="tiles" id="tiles"></div>
 
-      <div class="report-grid">
-        <section class="card report-card">
-          <h2>By day</h2>
-          <div id="by-day"></div>
-        </section>
-        <section class="card report-card">
-          <h2>By service</h2>
-          <div id="by-service"></div>
-        </section>
-      </div>
-      <p class="hint">Only your own completed services are counted. You and the shop split each service (50/50 as standard), and the table shows your share per day.</p>
+      <section class="card report-card">
+        <h2>Today's customers</h2>
+        <div id="today-list"></div>
+      </section>
+
+      <section class="card report-card" style="margin-top:16px">
+        <h2>History</h2>
+        <div class="actions no-print" role="tablist" aria-label="History view">
+          <button class="btn btn-sm btn-outline active" type="button" role="tab" aria-selected="true" data-hist="day">Per day</button>
+          <button class="btn btn-sm btn-outline" type="button" role="tab" aria-selected="false" data-hist="month">Per month</button>
+        </div>
+        <div id="history"></div>
+      </section>
+      <p class="hint">Only your own completed customers are counted. Your share is your part of each service (50/50 with the shop as standard).</p>
     </div>
   </main>
 
